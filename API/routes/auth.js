@@ -1,19 +1,21 @@
 const express = require('express');
 const router  = express.Router();
-var jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
 admin=[];
 admin['Dave']='11111';
 admin['Jacky']='10111';
-// admin['Andrew']='10110';
-key = 'mySecretP4ssKey'
+admin['Andrew']='10110';
+admin['Emily']='00110';
+key = require('../config/database').tokenKey;
 
 router.get('/test', (req,res) =>{
     res.json({message:'from API / Auth route'});
 });
 router.get('/decodeToken', (req,res)=>{
-    res.json({success:true, userName:'David'})
-})
+    res.json(req.decoded);
+});
+
 router.post('/initilizeLocalTokens', (req,res)=>{
     if(req.body.Initilize == null || req.body.Initilize == undefined){
         res.status(401).json({message:'No Body Selected'});

@@ -8,7 +8,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const config = require('./API/config/database'); 
-// const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const app = express();
 const server = http.createServer(app);
 
@@ -21,7 +21,6 @@ const authRoute = require('./API/routes/auth');
 const auctionRoute = require('./API/routes/auction');
 
 // **** Database Connection
-
 mongoose.connect(dbURI, { useUnifiedTopology: true, useNewUrlParser: true }, (err) => {
     if (err){
         console.log('DataBase Connection Error :', err);
@@ -29,8 +28,6 @@ mongoose.connect(dbURI, { useUnifiedTopology: true, useNewUrlParser: true }, (er
         console.log('Successfully Connected to Database : ',dbURI);
     }
 });
-
-
 // **** Middleware 
 app.use(cors());
 app.use(morgan('dev'));
@@ -44,6 +41,32 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
     res.setHeader('Access-Control-Allow-Credentials', true);
     next();
+});
+// **** Token Decode Middleware
+app.use((req, res,next)=>{
+    // console.log('Node Server Middle Ware : ', req.headers['xtoken']);
+    if (!req.headers['xtoken']){
+        req.decoded = {valid:false, decoded:null, admin:null, message: 'No Token Supplied'};
+        next();
+    } else {
+        let token = req.headers['xtoken'].split(' ');
+        let TOKEN = token[1] || 'false'
+        if(TOKEN !='false'){
+            jwt.verify(TOKEN, config.tokenKey, function(err, user) {
+                if(err){
+                    req.decoded = {valid:false, userName:null, admin:null, message: 'Token Error '+ err};
+                    next();
+                } else {
+                    console.log(user)
+                    req.decoded = {valid:true, userName:user.user, admin:user.admin, message: 'Token Decoded'};
+                    next();
+                }
+            });
+        } else {
+            req.decoded = {valid:false, userName:null, admin:null, message: 'No User Token Supplied'};
+            next();
+        }
+    }
 });
 // **** Router routes
 app.use('/api/auth', authRoute);
