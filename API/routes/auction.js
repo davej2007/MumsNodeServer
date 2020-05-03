@@ -40,17 +40,17 @@ router.get('/getAuctionInfo', (req,res)=>{
 });
 router.get('/getSoldAuctionInfo', (req,res)=>{
     AUCTION.find({status: { $gte: 2 }}).exec(function(err,auctions){
-          if (err) {
-              res.json({ success:false, message:'DB Error : ' + err });
-          } else {
-              if (!auctions){
-                  res.json({ success:false, message:'Auctions Not Found.' });
-              } else {
-                  res.json({ success:true, auctions});
-              }
-          }
-      });
-  });
+        if (err) {
+            res.json({ success:false, message:'DB Error : ' + err });
+        } else {
+            if (!auctions){
+                res.json({ success:false, message:'Auctions Not Found.' });
+            } else {
+                res.json({ success:true, auctions});
+            }
+        }
+    });
+});
   
 router.get('/getUnDeliveredInfo', (req,res)=>{
   AUCTION.find({ "courier.delivered": null, status: { $gte: 2 }}).exec(function(err,auctions){
