@@ -76,6 +76,11 @@ app.get('*', (req, res) => {
 });
 
 // **** Start Server
-server.listen(PORT, hostname, () => {
-  console.log(`Server running at http://${hostname}:${PORT}/`);
-});
+// server.listen(PORT, hostname, () => {
+//   console.log(`Server running at http://${hostname}:${PORT}/`);
+// });
+
+// start server
+app.listen(PORT, () => {
+    console.log('Server Running .... on port :'+PORT);
+  });
