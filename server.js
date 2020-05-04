@@ -14,7 +14,7 @@ const server = http.createServer(app);
 
 // **** Port Variables
 const hostname = 'localhost';
-const PORT = 3000;
+const PORT = process.env.PORT || 8080;
 const dbURI = process.env.dbUri || config.mlab;
 // **** API Routes
 const authRoute = require('./API/routes/auth');
