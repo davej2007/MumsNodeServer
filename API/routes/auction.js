@@ -2,29 +2,6 @@ const express = require('express');
 const router  = express.Router();
 const AUCTION = require('../models/auctions');
 const fs = require('fs');
-
-router.get('/test', (req,res) =>{
-    res.json({message:'from API / Auth route'});
-    AUCTION.find().exec(function(err,auctions){
-        if(err){
-            console.log(err)
-        } else {
-            auctions.forEach( a => {
-                
-                // a.auction.postage = a.auction.postage * 100;
-                
-                // a.save((err)=>{
-                //     if (err) {
-                //         console.log(err)
-                //     } else {
-                //         console.log(a)
-                //     }
-                // });
-            })
-        }
-    })
-});
-
 router.get('/getAuctionInfo', (req,res)=>{
     AUCTION.find().exec(function(err,auctions){
         if (err) {
@@ -333,7 +310,6 @@ router.post('/findEbayAuction', (req,res)=>{
         })
     }
 });
-
 router.post('/findPaypalTransaction', (req,res)=>{
     if(req.body.auction == undefined){
         res.json({ success:false, message: 'No Auction Number Supplied' });

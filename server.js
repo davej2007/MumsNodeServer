@@ -14,7 +14,7 @@ const server = http.createServer(app);
 // **** Port Variables
 const hostname = 'localhost';
 const PORT = process.env.PORT || 8080;
-const dbURI = process.env.dbUri || config.mlab;
+const dbURI = process.env.MONGODB_URI || config.heroku;
 // **** API Routes
 const authRoute = require('./API/routes/auth');
 const auctionRoute = require('./API/routes/auction');
