@@ -11,8 +11,8 @@ const config = require('./API/config/database');
 const jwt = require('jsonwebtoken');
 const app = express();
 const server = http.createServer(app);
-
 // **** Port Variables
+const hostname = 'localhost';
 const PORT = process.env.PORT || 8080;
 const dbURI = process.env.dbUri || config.mlab;
 // **** API Routes
@@ -75,11 +75,7 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname + '/public/index.html'));
 });
 
-// start server
-app.listen(PORT, () => {
-    console.log('Server Running .... on port :'+PORT);
-  });
 // **** Start Server
-// server.listen(PORT, hostname, () => {
-//   console.log(`Server running at http://${hostname}:${PORT}/`);
-// });
+server.listen(PORT, hostname, () => {
+  console.log(`Server running at http://${hostname}:${PORT}/`);
+});
