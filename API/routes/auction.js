@@ -1,7 +1,7 @@
 const express = require('express');
 const router  = express.Router();
 const AUCTION = require('../models/auctions');
-const fs = require('fs');
+
 router.get('/getAuctionInfo', (req,res)=>{
     AUCTION.find().exec(function(err,auctions){
         if (err) {

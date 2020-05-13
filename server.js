@@ -18,6 +18,7 @@ const dbURI = process.env.MONGODB_URI || config.heroku;
 // **** API Routes
 const authRoute = require('./API/routes/auth');
 const auctionRoute = require('./API/routes/auction');
+const visitsRoute = require('./API/routes/visits');
 
 // **** Database Connection
 mongoose.connect(dbURI, { useUnifiedTopology: true, useNewUrlParser: true }, (err) => {
@@ -70,6 +71,7 @@ app.use((req, res,next)=>{
 // **** Router routes
 app.use('/api/auth', authRoute);
 app.use('/api/auctions', auctionRoute);
+app.use('/api/visits', visitsRoute);
 // **** Main routes
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname + '/public/index.html'));
