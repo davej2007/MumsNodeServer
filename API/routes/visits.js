@@ -109,7 +109,6 @@ router.post('/updateVisitInfoById', (req,res)=>{
                         console.log('type 3', req.body)
                         // bins    : { type    : req.body.bins || 'n/a',
                         // used    : req.body.binsUsed || true }
-
                     }
                     visit.save((err)=>{
                         if (err) {
