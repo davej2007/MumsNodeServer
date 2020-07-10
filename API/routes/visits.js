@@ -1,7 +1,7 @@
 const express = require('express');
 const router  = express.Router();
 const VISIT = require('../models/visits');
-
+const fs = require('fs')
 router.get('/getVisitsInfo', (req,res)=>{
     VISIT.find().exec(function(err,visits){
         if (err) {
@@ -123,7 +123,6 @@ router.post('/updateVisitInfoById', (req,res)=>{
     }
 });
 router.post('/deleteVisitInfoById', (req,res)=>{
-    console.log(req.body.id)
     if(!req.body.id){
         res.json({ success:false, message: 'No ID Supplied' });
     } else {
@@ -136,4 +135,50 @@ router.post('/deleteVisitInfoById', (req,res)=>{
         })
     }
 });
+router.get('/convertToCSV',(req,res)=>{
+    console.log('In Convert')
+    VISIT.find().exec(function(err,visits){
+        if(err){
+            console.log(err)
+        } else {
+            console.log(visits[0])
+            fs.writeFile("visits.json", JSON.stringify(visits), err => { 
+                if (err) {
+                    console.log(err)
+                } else {
+
+                    console.log("Done writing"); // Success 
+                }                
+            }); 
+        }
+    })
+})
+router.get('/saveBackToMongo', (req,res)=>{
+    fs.readFile("visits.json", function(err, data) { 
+        if (err) {
+            console.log(err)
+        } else {
+            const visits = JSON.parse(data);
+            visits.forEach(element => {
+                var visit = new VISIT({
+                    home:{checks:{water:element.home.checks.water,windows:element.home.checks.windows,doors:element.home.checks.doors},
+                    by:element.home.by,
+                    comments:element.home.comments},
+                    agent: { time: element.agent.time, name: element.agent.name, feedback: element.agent.feedback },
+                    bins: { type: element.bins.type, used: element.bins.used },
+                    date: element.date,
+                    type: element.type,
+                })
+                visit.save((err)=>{
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        console.log(visit.date)
+                    }
+                });
+            }); 
+        }
+    });
+})
+
 module.exports = router;

@@ -1,7 +1,7 @@
 const express = require('express');
 const router  = express.Router();
 const AUCTION = require('../models/auctions');
-
+const fs = require('fs')
 router.get('/getAuctionInfo', (req,res)=>{
     AUCTION.find().exec(function(err,auctions){
         if (err) {
@@ -359,5 +359,81 @@ router.post('/saveNewAuction', (req,res)=>{
         });
     }
 });
+router.get('/convertToCSV',(req,res)=>{
+    console.log('In Convert')
+    AUCTION.find().exec(function(err,auctions){
+        if(err){
+            console.log(err)
+        } else {
+            fs.writeFile("auctions.json", JSON.stringify(auctions), err => { 
+                if (err) {
+                    console.log(err)
+                } else {
+                    console.log("Done writing"); // Success 
+                }                
+            }); 
+        }
+    })
+})
+router.get('/saveBackToMongo', (req,res)=>{
+    fs.readFile("auctions.json", function(err, data) { 
+        if (err) {
+            console.log(err)
+        } else {
+            const auctions = JSON.parse(data);
+            auctions.forEach(element => {
+                var auction = new AUCTION({
+                    auction: {
+                      dateListed: element.auction.dateListed,
+                      weight: element.auction.weight,
+                      description: element.auction.description,
+                      initialPrice: element.auction.initialPrice,
+                      postage: element.auction.postage
+                    },
+                    sold: {
+                      buyer: {
+                        userName: element.sold.buyer.userName,
+                        name: element.sold.buyer.name,
+                        postCode: element.sold.buyer.postCode
+                      },
+                      dateSold: element.sold.dateSold,
+                      auctionNo: element.sold.auctionNo,
+                      price: element.sold.price
+                    },
+                    paid: {
+                      paidBy: element.paid.paidBy,
+                      postage: element.paid.postage,
+                      transactionNo: element.paid.transactionNo,
+                      completed: element.paid.completed
+                    },
+                    fee: {
+                      finalFee:   { cost: element.fee.finalFee.cost, promo: element.fee.finalFee.promo, set: element.fee.finalFee.set, completed: element.fee.finalFee.completed },
+                      postageFee: { cost: element.fee.postageFee.cost, set: element.fee.postageFee.set, completed: element.fee.postageFee.completed },
+                      paypalFee:  { cost: element.fee.paypalFee.cost, set: element.fee.paypalFee.set, completed: element.fee.paypalFee.completed }
+                    },
+                    courier: {
+                      company: element.courier.company,
+                      trackingNo: element.courier.trackingNo,
+                      cost: element.courier.cost,
+                      delivered: element.courier.delivered
+                    },
+                    category: element.category,
+                    archive: element.archive,
+                    status: element.status
+                  }) 
+                auction.save((err)=>{
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        console.log(auction.auction.description)
+                    }
+                });
+            });
+                
+                
+            // });
+        }
+    });
+})
 
 module.exports = router;
